@@ -4,6 +4,15 @@ This is the home of the Spring Framework: the foundation for all [Spring project
 
 Spring provides everything required beyond the Java programming language for creating enterprise applications for a wide range of scenarios and architectures. Please read the [Overview](https://docs.spring.io/spring/docs/current/spring-framework-reference/overview.html#spring-introduction) section as reference for a more complete introduction.
 
+## 调试日记
+
+本源码Windows系统上调试环境(Eclipse下编译通过):
+	1. OpenJDK1.8; Gradle5.6.4.all. 版本不能瞎JB乱改.
+	2. 还要安装个插件: Groovy Development Tools.
+	3. 导入即可.
+	4. 如果某个单模块执行publishToMavenLocal时报错, 比如找不到符号之类的, 可以尝试把Eclipse中Gradle选项中的JDK HOME升到JDK17去试试.
+	5. 需要把.gitignore文件中的target/注释掉, 因为有些类的包名中有target, 不注掉的话会少同步类, 编译通不过.
+
 ## Code of Conduct
 
 This project is governed by the [Spring Code of Conduct](CODE_OF_CONDUCT.adoc). By participating, you are expected to uphold this code of conduct. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
