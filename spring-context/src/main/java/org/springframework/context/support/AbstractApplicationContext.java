@@ -513,10 +513,15 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.applicationListeners;
 	}
 
+	/**
+	 * 核心方法在此.Spring的启动过程和Bean初始化过程都体现在这里.
+	 * @throws BeansException
+	 * @throws IllegalStateException
+	 */
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.
+			// 1. 刷新上下文之前的准备工作.
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
@@ -583,11 +588,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * active flag as well as performing any initialization of property sources.
 	 */
 	protected void prepareRefresh() {
-		// Switch to active.
+		// 计开始时间.设置状态为激活.设置关闭标记为否.
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
 		this.active.set(true);
 
+		// 日志级别为debug则打印一些信息.
 		if (logger.isDebugEnabled()) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Refreshing " + this);
@@ -597,25 +603,25 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 		}
 
-		// Initialize any placeholder property sources in the context environment.
+		// 这是一个模板方法,待子类去扩展实现.
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
 		getEnvironment().validateRequiredProperties();
 
-		// Store pre-refresh ApplicationListeners...
+		// 如果earlyApplicationListeners为空,这里把准备好的applicationListeners引用过来.
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
 		else {
-			// Reset local application listeners to pre-refresh state.
+			// earlyApplicationListeners不为空的时候,则applicationListeners清空,直接赋值为earlyApplicationListeners.
+			// 这里说明在准备动作时,earlyApplicationListeners的优先级是高于applicationListeners,前者会覆盖后者.
 			this.applicationListeners.clear();
 			this.applicationListeners.addAll(this.earlyApplicationListeners);
 		}
 
-		// Allow for the collection of early ApplicationEvents,
-		// to be published once the multicaster is available...
+		// earlyApplicationEvents列表构造完毕,一旦就绪时就可以发布事件.
 		this.earlyApplicationEvents = new LinkedHashSet<>();
 	}
 
